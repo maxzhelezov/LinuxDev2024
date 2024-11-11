@@ -1,0 +1,6 @@
+*
+
+!.gitignore
+!configure.ac
+!Makefile.am
+!rhasher.c
