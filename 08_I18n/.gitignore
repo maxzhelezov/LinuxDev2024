@@ -1,0 +1,10 @@
+*
+
+!.gitignore
+!configure.ac
+!Makefile.am
+!*.c
+!ru.po
+!po/POTFILES.in
+!src
+!po
