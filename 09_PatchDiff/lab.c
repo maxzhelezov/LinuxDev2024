@@ -3,6 +3,7 @@
 #include <err.h>
 #include <limits.h>
 #include <errno.h>
+#include <string.h>
 
 // DWall - destructable wall (edges)
 // IWall - indestructable wall
@@ -101,14 +102,24 @@ void deinit_lab(tile **lab, int num_rooms) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 2){
-        errx(-1, "Неверное число параметров - %d, требуется 1", argc - 1);
+    if (argc != 3){
+        errx(-1, "Неверное число параметров - %d, требуется 2", argc - 1);
     }
     char *c;
     int num_rooms;
-    long num = strtol(argv[1], &c, 10);
+    long num;
+
+    if (strlen(argv[1]) != 2){
+        errx(-1, "Неверное количество символов первого аргумента - %ld, требуется 2", strlen(argv[2]));
+    }
+    sym_vis[1] = argv[1][0];
+    sym_vis[4] = argv[1][0];
+    sym_vis[2] = argv[1][1];
+    sym_vis[3] = argv[1][1];
+    
+    num = strtol(argv[2], &c, 10);
     if (errno != 0 || *c != '\0' || num > INT_MAX || num < INT_MIN) {
-        errx(-1, "Первый аргумент не число");
+        errx(-1, "Второй аргумент не число");
     }
     num_rooms = num;
 
