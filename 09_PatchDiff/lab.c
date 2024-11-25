@@ -1,15 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <err.h>
-#include <limits.h>
-#include <errno.h>
-#include <string.h>
 
 // DWall - destructable wall (edges)
 // IWall - indestructable wall
 typedef enum wall_type {None = 0, Room, DWall, IWall, Empty} tile;
 // visualization for each wall type
 char sym_vis[] = {'-', '.', '#', '#', '.'};
+
+#define NUM_ROOMS 6
 
 tile** init_lab(int num_rooms) {
     int i, j, lab_size = num_rooms * 2 + 1;
@@ -101,39 +99,10 @@ void deinit_lab(tile **lab, int num_rooms) {
     free(lab);
 }
 
-int main(int argc, char *argv[]) {
-    if (argc != 4){
-        errx(-1, "Неверное число параметров - %d, требуется 3", argc - 1);
-    }
-    char *c;
-    int num_rooms;
-    unsigned int seed;
-    long num;
-
-    num = strtol(argv[1], &c, 10);
-    if (errno != 0 || *c != '\0' || num > UINT_MAX || num < 0) {
-        errx(-1, "Первый аргумент не uint");
-    }
-    seed = num;
-
-    if (strlen(argv[2]) != 2){
-        errx(-1, "Неверное количество символов второго аргумента - %ld, требуется 2", strlen(argv[2]));
-    }
-    sym_vis[1] = argv[2][0];
-    sym_vis[4] = argv[2][0];
-    sym_vis[2] = argv[2][1];
-    sym_vis[3] = argv[2][1];
-    
-    num = strtol(argv[3], &c, 10);
-    if (errno != 0 || *c != '\0' || num > INT_MAX || num < INT_MIN) {
-        errx(-1, "Третий аргумент не число");
-    }
-    num_rooms = num;
-
-    srand(seed);
-    tile **lab = init_lab(num_rooms);
-    generate_lab(lab, num_rooms);
-    print_lab(lab, num_rooms);
-    deinit_lab(lab, num_rooms);
+int main() {
+    tile **lab = init_lab(NUM_ROOMS);
+    generate_lab(lab, NUM_ROOMS);
+    print_lab(lab, NUM_ROOMS);
+    deinit_lab(lab, NUM_ROOMS);
     return 0;
 }

@@ -1,0 +1,62 @@
+From fd5c28ea6e44ec70a32678ade742cf4cd88b8495 Mon Sep 17 00:00:00 2001
+From: Maxim Zhelezov <max5vrn@yandex.ru>
+Date: Mon, 25 Nov 2024 13:57:41 +0300
+Subject: [PATCH 1/3] Add first argument
+
+---
+ 09_PatchDiff/lab.c | 26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/09_PatchDiff/lab.c b/09_PatchDiff/lab.c
+index e964bcb..8340162 100644
+--- a/09_PatchDiff/lab.c
++++ b/09_PatchDiff/lab.c
+@@ -1,5 +1,8 @@
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <err.h>
++#include <limits.h>
++#include <errno.h>
+ 
+ // DWall - destructable wall (edges)
+ // IWall - indestructable wall
+@@ -7,8 +10,6 @@ typedef enum wall_type {None = 0, Room, DWall, IWall, Empty} tile;
+ // visualization for each wall type
+ char sym_vis[] = {'-', '.', '#', '#', '.'};
+ 
+-#define NUM_ROOMS 6
+-
+ tile** init_lab(int num_rooms) {
+     int i, j, lab_size = num_rooms * 2 + 1;
+     tile **lab = malloc(lab_size * sizeof(tile*));
+@@ -99,10 +100,21 @@ void deinit_lab(tile **lab, int num_rooms) {
+     free(lab);
+ }
+ 
+-int main() {
+-    tile **lab = init_lab(NUM_ROOMS);
+-    generate_lab(lab, NUM_ROOMS);
+-    print_lab(lab, NUM_ROOMS);
+-    deinit_lab(lab, NUM_ROOMS);
++int main(int argc, char *argv[]) {
++    if (argc != 2){
++        errx(-1, "Неверное число параметров - %d, требуется 1", argc - 1);
++    }
++    char *c;
++    int num_rooms;
++    long num = strtol(argv[1], &c, 10);
++    if (errno != 0 || *c != '\0' || num > INT_MAX || num < INT_MIN) {
++        errx(-1, "Первый аргумент не число");
++    }
++    num_rooms = num;
++
++    tile **lab = init_lab(num_rooms);
++    generate_lab(lab, num_rooms);
++    print_lab(lab, num_rooms);
++    deinit_lab(lab, num_rooms);
+     return 0;
+ }
+\ No newline at end of file
+-- 
+2.34.1
+

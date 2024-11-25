@@ -1,0 +1,62 @@
+From 8061fb53a4abaadf335db7ca59d61e82980b258f Mon Sep 17 00:00:00 2001
+From: Maxim Zhelezov <max5vrn@yandex.ru>
+Date: Mon, 25 Nov 2024 14:09:19 +0300
+Subject: [PATCH 3/3] Add seed as argument
+
+---
+ 09_PatchDiff/lab.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
+
+diff --git a/09_PatchDiff/lab.c b/09_PatchDiff/lab.c
+index 97c1f56..f2c03d8 100644
+--- a/09_PatchDiff/lab.c
++++ b/09_PatchDiff/lab.c
+@@ -102,27 +102,35 @@ void deinit_lab(tile **lab, int num_rooms) {
+ }
+ 
+ int main(int argc, char *argv[]) {
+-    if (argc != 3){
+-        errx(-1, "Неверное число параметров - %d, требуется 2", argc - 1);
++    if (argc != 4){
++        errx(-1, "Неверное число параметров - %d, требуется 3", argc - 1);
+     }
+     char *c;
+     int num_rooms;
++    unsigned int seed;
+     long num;
+ 
+-    if (strlen(argv[1]) != 2){
+-        errx(-1, "Неверное количество символов первого аргумента - %ld, требуется 2", strlen(argv[2]));
++    num = strtol(argv[1], &c, 10);
++    if (errno != 0 || *c != '\0' || num > UINT_MAX || num < 0) {
++        errx(-1, "Первый аргумент не uint");
+     }
+-    sym_vis[1] = argv[1][0];
+-    sym_vis[4] = argv[1][0];
+-    sym_vis[2] = argv[1][1];
+-    sym_vis[3] = argv[1][1];
++    seed = num;
++
++    if (strlen(argv[2]) != 2){
++        errx(-1, "Неверное количество символов второго аргумента - %ld, требуется 2", strlen(argv[2]));
++    }
++    sym_vis[1] = argv[2][0];
++    sym_vis[4] = argv[2][0];
++    sym_vis[2] = argv[2][1];
++    sym_vis[3] = argv[2][1];
+     
+-    num = strtol(argv[2], &c, 10);
++    num = strtol(argv[3], &c, 10);
+     if (errno != 0 || *c != '\0' || num > INT_MAX || num < INT_MIN) {
+-        errx(-1, "Второй аргумент не число");
++        errx(-1, "Третий аргумент не число");
+     }
+     num_rooms = num;
+ 
++    srand(seed);
+     tile **lab = init_lab(num_rooms);
+     generate_lab(lab, num_rooms);
+     print_lab(lab, num_rooms);
+-- 
+2.34.1
+
