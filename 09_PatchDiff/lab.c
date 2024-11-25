@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <err.h>
+#include <limits.h>
+#include <errno.h>
 
 // DWall - destructable wall (edges)
 // IWall - indestructable wall
 typedef enum wall_type {None = 0, Room, DWall, IWall, Empty} tile;
 // visualization for each wall type
 char sym_vis[] = {'-', '.', '#', '#', '.'};
-
-#define NUM_ROOMS 6
 
 tile** init_lab(int num_rooms) {
     int i, j, lab_size = num_rooms * 2 + 1;
@@ -99,10 +100,21 @@ void deinit_lab(tile **lab, int num_rooms) {
     free(lab);
 }
 
-int main() {
-    tile **lab = init_lab(NUM_ROOMS);
-    generate_lab(lab, NUM_ROOMS);
-    print_lab(lab, NUM_ROOMS);
-    deinit_lab(lab, NUM_ROOMS);
+int main(int argc, char *argv[]) {
+    if (argc != 2){
+        errx(-1, "Неверное число параметров - %d, требуется 1", argc - 1);
+    }
+    char *c;
+    int num_rooms;
+    long num = strtol(argv[1], &c, 10);
+    if (errno != 0 || *c != '\0' || num > INT_MAX || num < INT_MIN) {
+        errx(-1, "Первый аргумент не число");
+    }
+    num_rooms = num;
+
+    tile **lab = init_lab(num_rooms);
+    generate_lab(lab, num_rooms);
+    print_lab(lab, num_rooms);
+    deinit_lab(lab, num_rooms);
     return 0;
 }
